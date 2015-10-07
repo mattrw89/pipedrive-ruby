@@ -76,7 +76,7 @@ module Pipedrive
       end
 
       def all(response = nil, options={},get_absolutely_all=false)
-        res = response || get(resource_path, options)
+        res = response || get("#{resource_path}?api_token=#{@@key.to_s}", options)
         if res.ok?
           data = res['data'].nil? ? [] : res['data'].map{|obj| new(obj)}
           if get_absolutely_all && res['additional_data']['pagination'] && res['additional_data']['pagination'] && res['additional_data']['pagination']['more_items_in_collection']
