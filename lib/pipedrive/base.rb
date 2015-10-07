@@ -15,7 +15,7 @@ module Pipedrive
   class Base < OpenStruct
 
     include HTTParty
-    
+
     base_uri 'https://api.pipedrive.com/v1'
     headers HEADERS
     format :json
@@ -50,7 +50,7 @@ module Pipedrive
     # @param [Hash] opts
     # @return [Boolean]
     def update(opts = {})
-      res = put "#{resource_path}/#{id}", :body => opts
+      res = put "#{resource_path}/#{id}&api_token=#{@@key.to_s}", :body => opts
       if res.success?
         res['data'] = Hash[res['data'].map {|k, v| [k.to_sym, v] }]
         @table.merge!(res['data'])
@@ -60,15 +60,6 @@ module Pipedrive
     end
 
     class << self
-      # Sets the authentication credentials in a class variable.
-      #
-      # @param [String] email cl.ly email
-      # @param [String] password cl.ly password
-      # @return [Hash] authentication credentials
-      def authenticate(token)
-        default_params :api_token => token
-      end
-
       # Examines a bad response and raises an appropriate exception
       #
       # @param [HTTParty::Response] response
@@ -99,7 +90,7 @@ module Pipedrive
       end
 
       def create( opts = {} )
-        res = post resource_path, :body => opts
+        res = post "#{resource_path}&api_token=#{@@key.to_s}", :body => opts
         if res.success?
           res['data'] = opts.merge res['data']
           new(res)
@@ -109,19 +100,19 @@ module Pipedrive
       end
 
       def destroy(id)
-        res = delete "#{resource_path}/#{id}"
+        res = delete "#{resource_path}/#{id}?api_token=#{@@key.to_s}"
         unless res.success?
           bad_response(res, id)
         end
       end
 
       def find(id)
-        res = get "#{resource_path}/#{id}"
+        res = get "#{resource_path}/#{id}?api_token=#{@@key.to_s}"
         res.ok? ? new(res) : bad_response(res,id)
       end
 
       def find_by_name(name, opts={})
-        res = get "#{resource_path}/find", :query => { :term => name }.merge(opts)
+        res = get "#{resource_path}/find?api_token=#{@@key.to_s}", :query => { :term => name }.merge(opts)
         res.ok? ? new_list(res) : bad_response(res,{:name => name}.merge(opts))
       end
 
