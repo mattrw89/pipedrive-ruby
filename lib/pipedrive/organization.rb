@@ -2,11 +2,11 @@ module Pipedrive
   class Organization < Base
 
     def persons
-      Person.all(get "#{resource_path}/#{id}/persons?api_token=#{@@key.to_s}")
+      Person.all(get "#{resource_path}/#{id}/persons?api_token=#{Pipedrive.key.to_s}")
     end
 
     def deals
-      Deal.all(get "#{resource_path}/#{id}/deals?api_token=#{@@key.to_s}")
+      Deal.all(get "#{resource_path}/#{id}/deals?api_token=#{Pipedrive.key.to_s}")
     end
 
     class << self
