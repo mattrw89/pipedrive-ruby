@@ -50,7 +50,7 @@ module Pipedrive
     # @param [Hash] opts
     # @return [Boolean]
     def update(opts = {})
-      res = put "#{resource_path}/#{id}&api_token=#{@@key.to_s}", :body => opts
+      res = put "#{resource_path}/#{id}&api_token=#{Pipedrive.key.to_s}", :body => opts
       if res.success?
         res['data'] = Hash[res['data'].map {|k, v| [k.to_sym, v] }]
         @table.merge!(res['data'])
@@ -76,7 +76,7 @@ module Pipedrive
       end
 
       def all(response = nil, options={},get_absolutely_all=false)
-        res = response || get("#{resource_path}?api_token=#{@@key.to_s}", options)
+        res = response || get("#{resource_path}?api_token=#{Pipedrive.key.to_s}", options)
         if res.ok?
           data = res['data'].nil? ? [] : res['data'].map{|obj| new(obj)}
           if get_absolutely_all && res['additional_data']['pagination'] && res['additional_data']['pagination'] && res['additional_data']['pagination']['more_items_in_collection']
@@ -90,7 +90,7 @@ module Pipedrive
       end
 
       def create( opts = {} )
-        res = post "#{resource_path}&api_token=#{@@key.to_s}", :body => opts
+        res = post "#{resource_path}&api_token=#{Pipedrive.key.to_s}", :body => opts
         if res.success?
           res['data'] = opts.merge res['data']
           new(res)
@@ -100,19 +100,19 @@ module Pipedrive
       end
 
       def destroy(id)
-        res = delete "#{resource_path}/#{id}?api_token=#{@@key.to_s}"
+        res = delete "#{resource_path}/#{id}?api_token=#{Pipedrive.key.to_s}"
         unless res.success?
           bad_response(res, id)
         end
       end
 
       def find(id)
-        res = get "#{resource_path}/#{id}?api_token=#{@@key.to_s}"
+        res = get "#{resource_path}/#{id}?api_token=#{Pipedrive.key.to_s}"
         res.ok? ? new(res) : bad_response(res,id)
       end
 
       def find_by_name(name, opts={})
-        res = get "#{resource_path}/find?api_token=#{@@key.to_s}", :query => { :term => name }.merge(opts)
+        res = get "#{resource_path}/find?api_token=#{Pipedrive.key.to_s}", :query => { :term => name }.merge(opts)
         res.ok? ? new_list(res) : bad_response(res,{:name => name}.merge(opts))
       end
 
@@ -122,6 +122,10 @@ module Pipedrive
         klass = name.split('::').last
         klass[0] = klass[0].chr.downcase
         klass.end_with?('y') ? "/#{klass.chop}ies" : "/#{klass}s"
+      end
+
+      def get_key
+        getKey
       end
     end
   end

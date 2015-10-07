@@ -11,16 +11,16 @@ require 'pipedrive/stage'
 require 'pipedrive/note'
 
 module Pipedrive
-  attr_accessor :key
-  
+  mattr_accessor :key
+
   #set the giving API key for pipedrive
-	def self.key(key)
-	   @@key = key
-	end
+  def self.key=(key)
+    @@key = key
+  end
 
 	#See which key is givin
-	def self.getKey
-	  return @@key
-	end
+  def self.key
+    @@key
+  end
 
 end
