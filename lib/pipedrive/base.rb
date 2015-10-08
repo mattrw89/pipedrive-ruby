@@ -90,7 +90,7 @@ module Pipedrive
       end
 
       def create( opts = {} )
-        res = post "#{resource_path}&api_token=#{Pipedrive.key.to_s}", :body => opts
+        res = post "#{resource_path}?api_token=#{Pipedrive.key.to_s}", :body => opts
         if res.success?
           res['data'] = opts.merge res['data']
           new(res)
